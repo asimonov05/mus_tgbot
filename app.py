@@ -16,9 +16,10 @@ def send_message(chat_id, text):
 @app.route("/", methods=["GET", "POST"])
 def receive_update():
     if request.method == "POST":
-        text = request.json["message"]["text"]
-        chat_id = request.json["message"]["chat"]["id"]
-        send_message(chat_id, text)
+        if request.json.get("message"):
+            text = request.json["message"]["text"]
+            chat_id = request.json["message"]["chat"]["id"]
+            send_message(chat_id, text)
         print(request.json)
     return {"ok": True}
 
