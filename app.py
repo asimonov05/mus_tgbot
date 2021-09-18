@@ -1,20 +1,32 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 import requests
+token = "2024499408:AAHWeU_4iRWurzzUMDLETBWmQ6h_amfY9Mg"
 
 app = Flask(__name__)
+
+def send_message(chat_id, text):
+    method = "sendMessage"
+    global token
+    url = f"https://api.telegram.org/bot{token}/{method}"
+    data = {"chat_id": chat_id, "text": text}
+    requests.post(url, data=data)
 
 @app.route("/", methods=["GET", "POST"])
 def receive_update():
     if request.method == "POST":
+        text = request.json["message"]["text"]
+        chat_id = request.json["message"]["chat"]["id"]
+        send_message(chat_id, text)
         print(request.json)
     return {"ok": True}
 
-@app.route('/start_bot')
+@app.route('/start_bot', methods = ["GET", "POST"])
 def start_bot():
-    token = '2024499408:AAHWeU_4iRWurzzUMDLETBWmQ6h_amfY9Mg'
-    url = "https://8c2b-109-252-124-11.ngrok.io"
-    requests.post(f'https://api.telegram.org/bot{token}/setWebhook', data={"url": f"{url}"})
-    return 'ok'
+    global token
+    if request.method == "POST":        
+        url = request.form["url"]
+        requests.post(f'https://api.telegram.org/bot{token}/setWebhook', data={"url": f"{url}"})
+    return render_template("base.html")
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
