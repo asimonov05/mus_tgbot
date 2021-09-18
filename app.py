@@ -1,6 +1,8 @@
 from flask import Flask, request, render_template
 import requests
-token = "2024499408:AAHWeU_4iRWurzzUMDLETBWmQ6h_amfY9Mg"
+import os
+
+token = os.environ.get('TOKEN')
 
 app = Flask(__name__)
 
