@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template
 import requests
 import os
+from music import search
 
 token = os.environ.get('TOKEN')
 
@@ -19,7 +20,9 @@ def receive_update():
         if request.json.get("message"):
             text = request.json["message"]["text"]
             chat_id = request.json["message"]["chat"]["id"]
-            send_message(chat_id, text)
+            search_results = search(text)
+            print(search_results)
+            send_message(chat_id, '\n'.join(search_results))
         print(request.json)
     return {"ok": True}
 
